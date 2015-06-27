@@ -4,57 +4,73 @@ var Shop = require('../models/shop')
 
 var PetShopWindow = module.exports = {}
 
+
 PetShopWindow.controller = function () {
+
   var ctrl = this
+
+  // Sends get request, results of request set to ctr.shop
   ctrl.shop = m.prop(null)
   Shop.fetch().then(ctrl.shop)
+
+  // Similar to above, but pets
   ctrl.pets = m.prop(null)
   Shop.fetchPets().then(ctrl.pets)
 
-  ctrl.apiKey = m.prop(null);
+  // Properties to be used later
+  ctrl.apiKey   = m.prop(null);
+  ctrl.userName = m.prop(null);
+  ctrl.password = m.prop(null);
 
-
-  // ctrl.login = function(username, password){
+  // Sends a post request for sign-in
   ctrl.signIn = function(username,password) {
     Shop.signIn(username,password);
   }
-  //   Shop.login(username, password);
-  // }
 
-  // ctrl.signup = function(username, password){
-  //   Shop.signup(username, password);
-  // }
+  // Sends a post request for sign up
+  ctrl.signUp = function(username, password){
+    Shop.signup(username, password);
+  }
+
 }
 
 PetShopWindow.view = function (ctrl) {
-  // var likeButton = m();  // if logged in create like button, if not, create blank div
-  // if (ctrl.apiKey()){
-  //   likeButton = m('button')
-  // }
+  // if logged in create like button, if not, create blank div
+  if (ctrl.apiKey()){
+     likeButton = m('button')
+  };
 
+  // Fetches pet information, renders it
   var elementArray = ctrl.pets().map(function(pet,i) {
-    return m('.pet',{
-      "margin-bottom": "100px"
-
-    },"Name: "+ pet.name,[
-      m('.petSpecies', "Species: "+ pet.species),
-      m('.likes', "Likes: "+ pet.likes.length),
+    return m('.pet',{},"Name: " + pet.name,[
+              m('.petSpecies', "Species: "+ pet.species),
+              m('.likes', "Likes: "+ pet.likes.length),
       //likeButton,
-      m('img', {
-        src: pet.imageUrl,
-        height: "500px",
-        width : "500px"
-      })
-    ])
-  })
+              m('img', {
+                src: pet.imageUrl,
+                height: "500px",
+                width : "500px"
+                })
+              ])
+   })
+
+  var userNameInputElement = m('input[type=text]', ctrl.userName );
+  var passwordInputElement = m('input', { type: "text",  id: "passText"});
 
   if (!ctrl.apiKey()) {
 
-    elementArray.unshift(m('button', 'Sign In', { onclick: function() {
-      ctrl.signIn();
-    }}))
-    elementArray.unshift(m('input', { type: "text",  id: "passText"}))
-    elementArray.unshift(m('input', { type: "text", id: "userText"}))
+    elementArray.unshift(
+      m('button', { onclick: function() {
+        ctrl.signIn(userNameInputElement.value, passwordInputElement.value);
+                         }
+                    }, 'Sign In'));
+
+    elementArray.unshift(
+      m('button', { onclick: function() {
+        ctrl.signUp(userNameInputElement.value, passwordInputElement.value);
+    }}, 'Sign Up'));
+    elementArray.unshift(passwordInputElement);
+    elementArray.unshift(userNameInputElement);
   }
 
   elementArray.unshift(m('h1', "Welcome to " + ctrl.shop().name));
