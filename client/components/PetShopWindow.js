@@ -27,6 +27,7 @@ PetShopWindow.controller = function () {
 
 }
 
+var test = [];
 PetShopWindow.view = function (ctrl) {
   // var likeButton = m();  // if logged in create like button, if not, create blank div
   // if (ctrl.apiKey()){
