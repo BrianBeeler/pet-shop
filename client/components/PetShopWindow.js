@@ -65,4 +65,3 @@ PetShopWindow.view = function (ctrl) {
 
   return m('.pet-shop', elementArray);
 }
-
