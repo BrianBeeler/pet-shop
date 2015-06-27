@@ -11,19 +11,20 @@ PetShopWindow.controller = function () {
   ctrl.pets = m.prop(null)
   Shop.fetchPets().then(ctrl.pets)
 
+  ctrl.userInput   = m.prop(null);
+  ctrl.passInput   = m.prop(null);
   ctrl.apiKey = m.prop(null);
 
-
-  // ctrl.login = function(username, password){
   ctrl.signIn = function(username,password) {
-    Shop.signIn(username,password);
-  }
-  //   Shop.login(username, password);
-  // }
 
-  // ctrl.signup = function(username, password){
-  //   Shop.signup(username, password);
-  // }
+  var userData = Shop.signIn(username,password);
+  console.log(userData)
+  }
+  ctrl.signUp = function(username, password){
+
+   var userData = Shop.signUp(username, password);
+  }
+
 }
 
 PetShopWindow.view = function (ctrl) {
@@ -33,13 +34,9 @@ PetShopWindow.view = function (ctrl) {
   // }
 
   var elementArray = ctrl.pets().map(function(pet,i) {
-    return m('.pet',{
-      "margin-bottom": "100px"
-
-    },"Name: "+ pet.name,[
+    return m('.pet',{"margin-bottom": "100px"}, "Name: "+ pet.name,[
       m('.petSpecies', "Species: "+ pet.species),
       m('.likes', "Likes: "+ pet.likes.length),
-      //likeButton,
       m('img', {
         src: pet.imageUrl,
         height: "500px",
@@ -48,20 +45,35 @@ PetShopWindow.view = function (ctrl) {
     ])
   })
 
-  if (!ctrl.apiKey()) {
+   if (!ctrl.apiKey()){
+     elementArray.unshift(m('button','Sign Up', {
+       onclick: ctrl.signUp(ctrl.userInput(),ctrl.passInput())
+     }));
+     elementArray.unshift(m('button','Sign In', {
+       onclick: ctrl.signIn(ctrl.userInput(),ctrl.passInput())
 
-    elementArray.unshift(m('button', 'Sign In', { onclick: function() {
-      ctrl.signIn();
-    }}))
-    elementArray.unshift(m('input', { type: "text",  id: "passText"}))
-    elementArray.unshift(m('input', { type: "text", id: "userText"}))
+     }))
+
+  }
+
+  if (!ctrl.apiKey()) {
+    elementArray.unshift(m('input', {
+                                       type: "text",
+                                       id: "passText",
+                                       value: ctrl.userInput(),
+                                       //oninput: m.withAttr('value', ctrl.userInput)
+                                     }))
+    elementArray.unshift(m('input', {
+                                       type: "text",
+                                       id: "userText",
+                                       value: ctrl.passInput(),
+                                       oninput: m.withAttr('value', ctrl.passInput)
+                                    }))
   }
 
   elementArray.unshift(m('h1', "Welcome to " + ctrl.shop().name));
-  //if (!ctrl.apiKey()){
-  //   elementArray.unshift(m('button','Sign Up'));
-  //   elementArray.unshift(m('button','Sign In'))
-  // }
 
   return m('.pet-shop', elementArray);
 }
+
+
