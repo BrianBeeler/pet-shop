@@ -12,15 +12,26 @@ Shop.fetchPets = function () {
 }
 
 Shop.signUp = function(username, password) {
-   console.log('signUp:', username, password)
-   return m.request({ method: 'POST', url: "http://pet-shop.api.mks.io/signUp" })
+   //console.log('signUp:', username, password)
+   return m.request({ method: 'POST',
+                      url: "http://pet-shop.api.mks.io/signup",
+                      data: {"username": username, "password": password}
+                    })
 }
 
 Shop.signIn = function(username,password) {
-  console.log('signIn:', username, password)
+  //console.log('signIn:', username, password)
 
-  return m.request({method: 'POST', url: 'http://pet-shop.api.mks.io/signin', data: {
-    username: username,
-    password: password
-  }});
+  return m.request({method: 'POST',
+                    url: 'http://pet-shop.api.mks.io/signin',
+                    data: { "username": username, "password": password}
+                  });
+}
+
+Shop.likePet = function (petId, apiToken) {
+  return m.request({
+    method: 'POST',
+    url: 'http://pet-shop.api.mks.io/shops/1/pets/' + petId + '/like',
+    data: { apiToken: apiToken }
+  })
 }
